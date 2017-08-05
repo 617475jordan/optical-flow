@@ -73,8 +73,10 @@ Mat opticalFlow::tracking(Mat &frame, Mat &output)
 	{
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		//line(output, initial[i], points[1][i], color);
-		if (linePoint[i].size() >= 8)
+	
+		if (linePoint[i].size() >= 6)
 		{
+			double k0, k1;
 			double width = abs(initial[i].x - linePoint[i][0].x);
 			double height = abs(initial[i].y - linePoint[i][0].y);
 			double distance = width*width + height*height;
@@ -84,6 +86,7 @@ Mat opticalFlow::tracking(Mat &frame, Mat &output)
 			{
 				continue;
 			}
+			k0 = computeCos(initial[i].x, initial[i].y, linePoint[i][0].x, linePoint[i][0].y);
 			int countFlag = 0;
 			for (int j = 0; j < linePoint[i].size() - 1; j++)
 			{
@@ -92,20 +95,25 @@ Mat opticalFlow::tracking(Mat &frame, Mat &output)
 				double distance = width*width + height*height;
 
 				distance = sqrt(distance);
-				if (distance <= kDistance)
+				/*k1 = computeCos(linePoint[i][j].x, linePoint[i][j].y, linePoint[i][j + 1].x, linePoint[i][j + 1].y);
+				double k0k1 = abs(k1 - k0)*/;
+			
+				if (distance <= kDistance/*&&k0k1<=60*/)
 				{
 					countFlag++;
+					//swap(k1, k0);
 				}
+				
 			}
 			if (linePoint[i].size() - 1 == countFlag)
 			{
 				//cout << "Num is " << i << endl;
 				line(output, initial[i], linePoint[i][0], color);
 				//	cout << "X:" << initial[i].x << " " << "Y:" << initial[i].y << endl;
-				circle(output, initial[i], 3, Scalar(0, 255, 0), -1);
+				circle(output, initial[i], 3, Scalar(0, 255, 0), 4);
 				for (unsigned int j = 0; j < linePoint[i].size() - 1; j++)
 				{
-					line(output, linePoint[i][j], linePoint[i][j + 1], color,2);
+					line(output, linePoint[i][j], linePoint[i][j + 1], color,3);
 					circle(output, linePoint[i][j], 3, Scalar(0, 255, 0), -1);
 
 					//	cout << "X:" << linePoint[i][j].x << " " << "Y:" << linePoint[i][j].y<< endl;
@@ -121,7 +129,11 @@ Mat opticalFlow::tracking(Mat &frame, Mat &output)
 	swap(gray_prev, gray);
 	return output;
 }
-
+double opticalFlow::computeCos(double x0, double y0, double x1, double y1)
+{
+	double kThrshold = (y1 - y0) / (x1 - x0);
+	return acos(kThrshold)*180/PI;
+}
 // 检测新点是否应该被添加
 // return: 是否被添加标志
 bool opticalFlow::addNewPoints()

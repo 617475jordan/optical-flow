@@ -1,7 +1,19 @@
-#include <opencv_all.h>
+#include "opencv2/opencv.hpp"
+#include "opencv2/core/internal.hpp"
+#include "opencv2/legacy/legacy.hpp"
+#include "opencv2/legacy/compat.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/nonfree/nonfree.hpp"
+#include "opencv/highgui.h"
+#include <ctime>
+#include <time.h>
+#include <math.h>
+#include <iostream>
+#include <ostream>
 #include "opticalFlow.h"
-#include "lightCompensate.h"
-#include "ImageEnhancement.h"
+using namespace std;
+using namespace cv;
 int thresholdArea = 100;
 Mat frame, result;
 
@@ -23,8 +35,7 @@ Mat colorConvert(Mat src, Mat out, int flag);
 int main()
 {
 	opticalFlow opticalFlow;
-	lightCompensate lightCompensate;
-	imageEnhancement imageEnhancement;
+
 	VideoCapture capture;
 	capture.open("..\\video\\gesture.avi");
 	//capture.open(0);
@@ -38,23 +49,25 @@ int main()
 	Mat foreground;
 	Mat background;
 
-	/*while (1)
-	{*/
-	char filename[100];
-
-	for (int i = 1; i <= 539; i++)
+	while (1)
 	{
-		sprintf(filename, "..\\image(li)\\image%d.jpg", i);
-		frame = imread(filename);
+	//char filename[100];
+
+	//for (int i = 1; i <= 539; i++)
+	//{
+	//	sprintf(filename, "..\\image(li)\\image%d.jpg", i);
+	//	frame = imread(filename);
 		int t = clock();
-		//capture >> frame;
+		capture >> frame;
 		if (frame.empty())
 		{
-			i = 1; 
-			continue;
-		//	return -1;
+		//	i = 1; 
+		//	continue;
+			return -1;
 		}
-		flip(frame, frame, -1);
+		cvtColor(frame, frame, CV_RGBA2GRAY);
+		cvtColor(frame, frame, CV_GRAY2RGB);
+		//flip(frame, frame, -1);
 		//frame = imageEnhancement.SimplestCB(frame,1);
 		//frame = lightCompensate.Compensate(frame);
 		//frame = lightCompensate.whiteBalance(frame);

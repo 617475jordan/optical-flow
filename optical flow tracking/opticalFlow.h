@@ -1,5 +1,21 @@
 #pragma once
-#include <opencv_all.h>
+#include "opencv2/opencv.hpp"
+#include "opencv2/core/internal.hpp"
+#include "opencv2/legacy/legacy.hpp"
+#include "opencv2/legacy/compat.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/nonfree/nonfree.hpp"
+#include "opencv/highgui.h"
+#include <ctime>
+#include <time.h>
+#include <math.h>
+#include <iostream>
+#include <ostream>
+#include <cmath>
+using namespace std;
+using namespace cv;
+double   const   PI = acos(double(-1));
 class opticalFlow
 {
 public:
@@ -9,6 +25,7 @@ public:
 	Mat tracking(Mat &frame, Mat &output);
 	bool addNewPoints();
 	bool acceptTrackedPoint(int i);
+	double opticalFlow::computeCos(double x0, double y0, double x1, double y1);
 private:
 	//  描述：声明全局变量
 	
